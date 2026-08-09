@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: linear-gradient(
+        180deg,
+        #feffff,
+        #c5c5c5
+    );
+
+    min-height: 100vh;
+}
+ img {
+    margin-bottom: -15px;
+}
+
+h2 {
+    font-family: Arial;
+    margin-top: 0;
+    margin-bottom: -20px;
+}
+h3 {
+    font-family: Arial;
+    margin-top: 20;
+}
