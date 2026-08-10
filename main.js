@@ -24,6 +24,9 @@ let voices = [];
 // MODEL
 // ==========================
 
+//=============================================================================================
+// THIS IS THE MODEL URL (GET THIS FROM THE POSE MODEL IN TEACHABLE MACHINE)  V V V V
+//============================================================================================
 const modelURL =
   "https://teachablemachine.withgoogle.com/models/jaOMYzL7l/";
 
@@ -31,6 +34,7 @@ const modelURL =
 // COMMUNICATION BOARD
 // ==========================
 
+//This is an array of word choices, feel free to change the words in the array to change the word buttons on the screen!
 const words = [
   "Hello",
   "Bye",
@@ -52,14 +56,17 @@ const words = [
 let selectedIndex = 0;
 let buttons = [];
 let board;
+let appRoot;
 
 // ==========================
 // SETUP
 // ==========================
 
-async function setup() {
+// BTW async means that it is an asynchronous function (makes promises) *brings in the model
 
-  createCanvas(400, 400);
+async function setup() {
+  appRoot = select("#app-root");
+  createCanvas(400, 400).parent(appRoot);
 
   // ==========================
   // WEBCAM
@@ -113,41 +120,15 @@ async function setup() {
 // ==========================
 
 function draw() {
+  image(video, 0, 0, 400, 400);
 
-  // Webcam
-  image(
-    video,
-    0,
-    0,
-    400,
-    400
-  );
-
-  // Status bar
   fill(0);
+  rect(0, 0, width, 45);
 
-  rect(
-    0,
-    0,
-    width,
-    45
-  );
-
-  // Status text
   fill(255);
-
   textSize(20);
-
-  textAlign(
-    CENTER,
-    CENTER
-  );
-
-  text(
-    label,
-    width / 2,
-    22.5
-  );
+  textAlign(CENTER, CENTER);
+  text(label, width / 2, 22.5);
 }
 
 // ==========================
@@ -155,59 +136,16 @@ function draw() {
 // ==========================
 
 function createVoiceButton() {
+  let voiceButton = createButton("🔊 Enable Voice");
+  voiceButton.parent(appRoot);
+  voiceButton.addClass("voice-button");
 
-  let voiceButton =
-    createButton(
-      "🔊 Enable Voice"
-    );
-
-  voiceButton.position(
-   CENTER,500
-  );
-
-  voiceButton.style(
-    "font-size",
-    "16px"
-  );
-
-  voiceButton.style(
-    "padding",
-    "8px"
-  );
-
-  voiceButton.style(
-    "background",
-    "white"
-  );
-
-  voiceButton.style(
-    "border",
-    "2px solid black"
-  );
-
-  voiceButton.style(
-    "border-radius",
-    "6px"
-  );
-
-  voiceButton.mousePressed(
-    () => {
-
-      voiceEnabled = true;
-
-      speak(
-        "Voice enabled"
-      );
-
-      voiceButton.html(
-        "🔊 Voice Enabled"
-      );
-
-      console.log(
-        "Voice enabled!"
-      );
-    }
-  );
+  voiceButton.mousePressed(() => {
+    voiceEnabled = true;
+    speak("Voice enabled");
+    voiceButton.html("🔊 Voice Enabled");
+    console.log("Voice enabled!");
+  });
 }
 
 // ==========================
@@ -215,21 +153,12 @@ function createVoiceButton() {
 // ==========================
 
 function loadVoices() {
+  voices = window.speechSynthesis.getVoices();
 
-  voices =
-    window.speechSynthesis.getVoices();
-
-  window.speechSynthesis.onvoiceschanged =
-    () => {
-
-      voices =
-        window.speechSynthesis.getVoices();
-
-      console.log(
-        "Available voices:",
-        voices.length
-      );
-    };
+  window.speechSynthesis.onvoiceschanged = () => {
+    voices = window.speechSynthesis.getVoices();
+    console.log("Available voices:", voices.length);
+  };
 }
 
 // ==========================
@@ -237,99 +166,20 @@ function loadVoices() {
 // ==========================
 
 function createCommunicationBoard() {
-
   board = createDiv();
+  board.parent(appRoot);
+  board.addClass("communication-board");
 
-  board.position(
-    CENTER,
-    550
-  );
+  for (let i = 0; i < words.length; i++) {
+    let button = createButton(words[i]);
+    button.parent(board);
+    button.addClass("communication-button");
 
-  board.size(
-    400,
-    400
-  );
+    button.mousePressed(() => {
+      speak(words[i]);
+    });
 
-  board.style(
-    "display",
-    "grid"
-  );
-
-  board.style(
-    "grid-template-columns",
-    "repeat(3, 1fr)"
-  );
-
-  board.style(
-    "grid-template-rows",
-    "repeat(5, 1fr)"
-  );
-
-  board.style(
-    "gap",
-    "8px"
-  );
-
-  board.style(
-    "padding",
-    "8px"
-  );
-
-  board.style(
-    "box-sizing",
-    "border-box"
-  );
-
-  // Create buttons
-  for (
-    let i = 0;
-    i < words.length;
-    i++
-  ) {
-
-    let button =
-      createButton(
-        words[i]
-      );
-
-    button.parent(
-      board
-    );
-
-    button.style(
-      "font-size",
-      "20px"
-    );
-
-    button.style(
-      "font-weight",
-      "bold"
-    );
-
-    button.style(
-      "border-radius",
-      "8px"
-    );
-
-    button.style(
-      "cursor",
-      "pointer"
-    );
-
-    // Manual button press
-    button.mousePressed(
-      () => {
-
-        speak(
-          words[i]
-        );
-
-      }
-    );
-
-    buttons.push(
-      button
-    );
+    buttons.push(button);
   }
 
   updateSelector();
@@ -340,48 +190,11 @@ function createCommunicationBoard() {
 // ==========================
 
 function updateSelector() {
-
-  for (
-    let i = 0;
-    i < buttons.length;
-    i++
-  ) {
-
-    if (
-      i === selectedIndex
-    ) {
-
-      buttons[i].style(
-        "background-color",
-        "green"
-      );
-
-      buttons[i].style(
-        "color",
-        "white"
-      );
-
-      buttons[i].style(
-        "border",
-        "5px solid darkgreen"
-      );
-
+  for (let i = 0; i < buttons.length; i++) {
+    if (i === selectedIndex) {
+      buttons[i].addClass("active");
     } else {
-
-      buttons[i].style(
-        "background-color",
-        "white"
-      );
-
-      buttons[i].style(
-        "color",
-        "black"
-      );
-
-      buttons[i].style(
-        "border",
-        "2px solid black"
-      );
+      buttons[i].removeClass("active");
     }
   }
 }
@@ -391,24 +204,14 @@ function updateSelector() {
 // ==========================
 
 function moveSelector() {
-
   selectedIndex++;
 
-  // Loop back to first word
-  if (
-    selectedIndex >=
-    words.length
-  ) {
-
+  if (selectedIndex >= words.length) {
     selectedIndex = 0;
   }
 
   updateSelector();
-
-  console.log(
-    "GREEN SELECTOR:",
-    words[selectedIndex]
-  );
+  console.log("GREEN SELECTOR:", words[selectedIndex]);
 }
 
 // ==========================
@@ -416,142 +219,59 @@ function moveSelector() {
 // ==========================
 
 function speak(text) {
-
   if (!voiceEnabled) {
-
-    console.log(
-      "Voice is not enabled yet."
-    );
-
+    console.log("Voice is not enabled yet.");
     return;
   }
 
-  // Stop previous speech
   window.speechSynthesis.cancel();
 
-  const speech =
-    new SpeechSynthesisUtterance(
-      text
-    );
+  const speech = new SpeechSynthesisUtterance(text);
 
   speech.volume = 1;
   speech.rate = 1;
   speech.pitch = 1;
 
-  // Find English voice
-  const englishVoice =
-    voices.find(
-      voice =>
-        voice.lang.startsWith("en")
-    );
+  const englishVoice = voices.find((voice) => voice.lang.startsWith("en"));
 
   if (englishVoice) {
-
-    speech.voice =
-      englishVoice;
+    speech.voice = englishVoice;
   }
 
-  speech.onstart =
-    () => {
+  speech.onstart = () => {
+    console.log("Speaking:", text);
+  };
 
-      console.log(
-        "Speaking:",
-        text
-      );
-    };
+  speech.onerror = (error) => {
+    console.error("Speech error:", error);
+  };
 
-  speech.onerror =
-    (error) => {
-
-      console.error(
-        "Speech error:",
-        error
-      );
-    };
-
-  window.speechSynthesis.speak(
-    speech
-  );
+  window.speechSynthesis.speak(speech);
 }
 
 // ==========================
 // HANDLE CLASSIFICATION
 // ==========================
 
-function handleLabel(
-  newLabel
-) {
+function handleLabel(newLabel) {
+  const normalizedLabel = newLabel.trim().toLowerCase();
 
-  const normalizedLabel =
-    newLabel
-      .trim()
-      .toLowerCase();
+  console.log("Accepted detection:", normalizedLabel);
 
-  console.log(
-    "Accepted detection:",
-    normalizedLabel
-  );
-
-  // ==========================
-  // NOTHING
-  // ==========================
-
-  if (
-    normalizedLabel ===
-    "nothing"
-  ) {
-
+  if (normalizedLabel === "nothing") {
     label = "Nothing";
-
-    // IMPORTANT:
-    // Every valid Nothing detection
-    // moves the selector.
-    //
-    // Since detections happen every
-    // 5 seconds, the selector moves
-    // every 5 seconds while Nothing
-    // remains detected.
-
-    console.log(
-      "NOTHING DETECTED → MOVE SELECTOR"
-    );
-
+    console.log("NOTHING DETECTED → MOVE SELECTOR");
     moveSelector();
-
-    // Reset Hello so the next Hello
-    // can trigger another input.
     helloProcessed = false;
-
     return;
   }
 
-  // ==========================
-  // HELLO
-  // ==========================
-
-  if (
-    normalizedLabel ===
-    "hello"
-  ) {
-
+  if (normalizedLabel === "hello") {
     label = "Input";
 
-    // Only speak once until
-    // Nothing is detected again.
-
-    if (
-      !helloProcessed
-    ) {
-
-      console.log(
-        "HELLO DETECTED → SPEAKING:",
-        words[selectedIndex]
-      );
-
-      speak(
-        words[selectedIndex]
-      );
-
+    if (!helloProcessed) {
+      console.log("HELLO DETECTED → SPEAKING:", words[selectedIndex]);
+      speak(words[selectedIndex]);
       helloProcessed = true;
     }
 
@@ -564,90 +284,29 @@ function handleLabel(
 // ==========================
 
 async function classifyPose() {
-
   try {
+    const { pose, posenetOutput } = await model.estimatePose(video.elt);
+    const predictions = await model.predict(posenetOutput);
 
-    // ==========================
-    // ESTIMATE POSE
-    // ==========================
+    let bestPrediction = predictions[0];
 
-    const {
-      pose,
-      posenetOutput
-    } =
-      await model.estimatePose(
-        video.elt
-      );
-
-    // ==========================
-    // PREDICT
-    // ==========================
-
-    const predictions =
-      await model.predict(
-        posenetOutput
-      );
-
-    // ==========================
-    // FIND BEST PREDICTION
-    // ==========================
-
-    let bestPrediction =
-      predictions[0];
-
-    for (
-      let i = 1;
-      i < predictions.length;
-      i++
-    ) {
-
-      if (
-        predictions[i].probability >
-        bestPrediction.probability
-      ) {
-
-        bestPrediction =
-          predictions[i];
+    for (let i = 1; i < predictions.length; i++) {
+      if (predictions[i].probability > bestPrediction.probability) {
+        bestPrediction = predictions[i];
       }
     }
 
-    // ==========================
-    // 5-SECOND DETECTION TIMER
-    // ==========================
+    const currentTime = millis();
 
-    const currentTime =
-      millis();
+    if (currentTime - lastDetectionTime >= detectionInterval) {
+      lastDetectionTime = currentTime;
 
-    if (
-      currentTime -
-        lastDetectionTime >=
-      detectionInterval
-    ) {
-
-      lastDetectionTime =
-        currentTime;
-
-      console.log(
-        "Prediction:",
-        bestPrediction.className,
-        bestPrediction.probability
-      );
-
-      handleLabel(
-        bestPrediction.className
-      );
+      console.log("Prediction:", bestPrediction.className, bestPrediction.probability);
+      handleLabel(bestPrediction.className);
     }
-
   } catch (error) {
-
-    console.error(
-      "Classification error:",
-      error
-    );
+    console.error("Classification error:", error);
   }
 
-  // Continue classification
-  requestAnimationFrame(
-    classifyPose
-  );
+  requestAnimationFrame(classifyPose);
 }
