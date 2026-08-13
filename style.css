@@ -150,7 +150,7 @@ body {
 ===================================================== */
 
 h1, h2, h3, p {
-    margin: 0;
+    margin: -50;
 }
 
 h1, h2, h3 {
@@ -166,7 +166,7 @@ h1, h2, h3 {
     color: var(--ink-soft);
     max-width: 560px;
     text-align: center;
-    margin-top: 4px;
+    margin-top: -15px;
 }
 
 /* =====================================================
@@ -265,6 +265,34 @@ canvas {
     transform: translateY(0);
 }
 
+
+/* =====================================================
+   HOME
+===================================================== */
+.home-button {
+    display: inline-block;
+    margin-top: 8px;
+
+    color: var(--accent);
+    text-decoration: none;
+
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: color 0.15s ease;
+}
+
+.home-button:hover {
+    color: var(--ink);
+    text-decoration: underline;
+}
+
+.home-button:active {
+    color: var(--accent-deep);
+}
 /* =====================================================
    COMMUNICATION BOARD
 ===================================================== */
@@ -325,70 +353,122 @@ canvas {
     }
 }
 
+
+
 /* =====================================================
-   MOBILE
+   MOBILE / RESPONSIVE SCALING
 ===================================================== */
 
 @media (max-width: 800px) {
 
     body {
-        padding: 20px 14px;
+        padding: 16px 10px;
     }
 
-    .hero-card {
-        padding: 40px 22px;
-    }
-
-    .hero-copy {
+    .page-shell,
+    .hero-card,
+    .demo-card {
         width: 100%;
     }
 
+    /* Scale the overall Lumen interface */
+    .page-shell {
+        transform: scale(0.90);
+        transform-origin: top center;
+        width: 111.11%;
+        margin-left: -5.56%;
+    }
+
+    .hero-card {
+        padding: 34px 15px;
+    }
+
     .hero-visual img {
-        width: min(100px, 100%);
+        width: min(105px, 70%);
+    }
+
+    .demo-card {
+        padding: 15px 10px;
+    }
+
+    #app-root {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    .communication-board {
+        width: 100%;
+        gap: 6px;
+    }
+
+    .communication-button {
+        min-height: 44px;
+        padding: 8px 4px;
+        font-size: 1 rem;
+    }
+
+    .voice-button {
+        max-width: 250px;
+        padding: 10px 14px;
+        font-size: 0.79rem;
     }
 }
 
-/* ==========================
-   HOME BUTTON
-   ========================== */
+/* =====================================================
+   SMALLER PHONES
+===================================================== */
 
-.home-button {
-    position: absolute;
-    top: 1490px;
-    left: 15;
+@media (max-width: 450px) {
 
-    display: inline-block;
+    .page-shell {
+        transform: scale(0.85);
+        width: 117.65%;
+        margin-left: -8.82%;
+    }
 
-    padding: 10px 18px;
-    border-radius: 999px;
+    .hero-card {
+        padding: 30px 14px;
+    }
 
-    background: var(--ink);
-    color: var(--surface);
+    .hero-visual img {
+        width: min(95px, 65%);
+    }
 
-    text-decoration: none;
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 600;
+    .demo-card {
+        padding: 12px 7px;
+    }
 
-    border: 1px solid var(--ink);
+    #app-root {
+        padding: 7px;
+        gap: 8px;
+    }
 
-    box-shadow: 0 5px 14px rgba(27, 33, 29, 0.12);
+    .communication-board {
+        gap: 5px;
+    }
 
-    transition:
-        background 0.15s ease,
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+    .communication-button {
+        min-height: 39px;
+        padding: 6px 3px;
+        font-size: 0.68rem;
+    }
 
-    z-index: 10;
-}
+    .demo-header h2 {
+        font-size: 1rem;
+    }
 
-.home-button:hover {
-    background: var(--accent-deep);
-    border-color: var(--accent-deep);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(19, 18, 23, 0.16);
-}
+    .demo-header p {
+        font-size: 0.7rem;
+    }
 
-.home-button:active {
-    transform: translateY(0);
+    .voice-button {
+        max-width: 230px;
+        padding: 9px 13px;
+        font-size: 0.75rem;
+    }
 }
